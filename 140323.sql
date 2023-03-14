@@ -76,3 +76,20 @@ JOIN [Order Details] OD ON OD.OrderID=O.OrderID
 JOIN Products P ON P.ProductID=OD.ProductID
 JOIN Categories C ON C.CategoryID=P.CategoryID
 
+-- Sadece Beverages kategorisinde ürünlerin KDV oraný %8 olsun, diðer kategorilerdeki ürünlerin KDV oraný %18 olsun.
+--ProductNmae, CategoryName, UnitPrice, KDVLi Fiyat tablolarý oluþturulcak
+alter FUNCTION kdvliekle (@fiyat money,@kategori nvarchar)
+RETURNS MONEY
+BEGIN
+ IF @kategori ='Beverages' begin return @fiyat*1.08; end else begin return @fiyat*1.18 ;end
+ return @fiyat
+END;
+
+
+
+select ProductName,CategoryName,OD.UnitPrice,[dbo].[kdvliekle](OD.UnitPrice,CategoryName) from Orders O
+
+JOIN [Order Details] OD ON OD.OrderID=O.OrderID
+JOIN Products P ON P.ProductID=OD.ProductID
+JOIN Categories C ON C.CategoryID=P.CategoryID
+
